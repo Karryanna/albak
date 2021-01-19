@@ -17,6 +17,7 @@ argparser = argparse.ArgumentParser()
 argparser.add_argument('--base-dir', default='source')
 argparser.add_argument('--dest-dir', default='processed')
 argparser.add_argument('--rename', action='store_true')
+argparser.add_argument('--name-mask')
 argparser.add_argument('--no-resize', dest='resize', action='store_false')
 args = argparser.parse_args()
 
@@ -78,7 +79,7 @@ for dir in dirs:
         if str(exifdate).startswith('0000'):
           print('Value of DateTimeOriginal tag ({}) does not make sense in {}'.format(exifdate, f), file=sys.stderr)
           continue
-        dt = datetime.datetime.strptime(str(exifidate), '%Y:%m:%d %H:%M:%S')
+        dt = datetime.datetime.strptime(str(exifdate), '%Y:%m:%d %H:%M:%S')
         new_name = datetime.datetime.strftime(dt, '%Y-%m-%d %H.%M.%S')
 
         if new_name in counts:
@@ -86,6 +87,7 @@ for dir in dirs:
           new_name += '-' + str(counts[new_name])
         else:
           counts[new_name] = 1
+        new_name += '.jpg'
         print('{} => {}'.format(str(f), new_name))
 
     subprocess.run(['convert', '-resize', resize_size, f, args.dest_dir + '/' + new_name])
