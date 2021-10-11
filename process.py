@@ -38,8 +38,13 @@ for dir in dirs:
 
     elif f.is_file():
       if not f.suffix.lower()[1:] in ['jpg', 'jpeg', 'png']:
-        print('Skipping file {}'.format(f), file=sys.stderr)
-        continue
+        if f.suffix.lower()[1:] in ['heic']:
+          newfile = f.parent / (f.stem + '.jpg')
+          subprocess.run(['convert', f, newfile])
+          f = newfile
+        else:
+          print('Skipping file {}'.format(f), file=sys.stderr)
+          continue
 
     with open(f, 'rb') as imagefile:
       tags = exifread.process_file(imagefile)
